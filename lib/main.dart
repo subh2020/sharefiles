@@ -114,14 +114,14 @@ class _MyHomePageState extends State<MyHomePage> {
         return null;
       }
       ui.Image image = await boundary.toImage();
-      final directory = (await getExternalStorageDirectory()).path;
+      final Directory temp = await getTemporaryDirectory();
+      final File imgFile = new File('${temp.path}/screenshot.png');
       ByteData byteData = await image.toByteData(format: ui.ImageByteFormat.png);
       Uint8List pngBytes = byteData.buffer.asUint8List();
-      File imgFile = new File('$directory/screenshot.png');
       imgFile.writeAsBytes(pngBytes);
       // print('Screenshot Path:' + imgFile.path);
       final RenderBox box = context.findRenderObject();
-      Share.shareFile(File('$directory/screenshot.png'),
+      Share.shareFiles(['${temp.path}/screenshot.png'],
         subject: 'Screenshot + Share',
         text: 'Hey, check it out the sharefiles repo!',
         sharePositionOrigin: box.localToGlobal(Offset.zero) & box.size
@@ -142,11 +142,11 @@ class _MyHomePageState extends State<MyHomePage> {
     if (Platform.isAndroid) {
       var url = 'https://www.winklix.com/blog/wp-content/uploads/2020/01/6t1pv3xcd.png';
       var response = await get(url);
-      final documentDirectory = (await getExternalStorageDirectory()).path;
-      File imgFile = new File('$documentDirectory/flutter.png');
+      final Directory temp = await getTemporaryDirectory();
+      final File imgFile = new File('${temp.path}/flutter.png');
       imgFile.writeAsBytesSync(response.bodyBytes);
 
-      Share.shareFile(File('$documentDirectory/flutter.png'),
+      Share.shareFiles(['${temp.path}/flutter.png'],
           subject: 'URL conversion + Share',
           text: 'Hey! Checkout the Share Files repo',
           sharePositionOrigin: box.localToGlobal(Offset.zero) & box.size);
